@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.shop.mapper.OrderDao">
+    <insert id="insertToOrder">
+        insert into `order`(id,price,receiverAddress,receiverName,receiverPhone,paystate,orderTime,uid)
+        values(#{id},#{price},#{receiverAddress},#{receiverName},#{receiverPhone},0,now(),#{uid})
+    </insert>
+    <insert id="insertToOrderItem">
+        insert into orderitem(orderid,pid,`count`)
+        values(#{orderid},#{pid},#{count})
+    </insert>
+    <update id="updatePayState">
+        update `order` set paystate=#{state}
+        where id=#{orderId}
+    </update>
+    <select id="selectOneByOrderId" resultType="Order">
+        select id,price,receiverAddress,receiverName,receiverPhone,paystate,orderTime,uid
+        from `order` where id=#{orderId}
+    </select>
+    <select id="selectOneItemByOrderId" resultType="OrderItem">
+        select orderid,pid,`count`,id,name,price,pnum,category,description,img_url
+        from orderitem,product
+        where orderitem.pid=product.id and orderid=#{orderId}
+
+
+    </select>
+</mapper>

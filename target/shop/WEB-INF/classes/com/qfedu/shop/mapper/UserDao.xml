@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.shop.mapper.UserDao">
+    <!--用户表列名片段-->
+    <sql id="userColumn">
+        username,password,gender,email,telephone,introduce,activeCode,role,state,registTime
+    </sql>
+
+
+    <!--插入用户-->
+    <insert id="insertUser" parameterType="User">
+      insert into user(<include refid="userColumn"/> )
+      values(#{username},#{password},#{gender},#{email},#{telephone},#{introduce},1,'user',#{state},now())
+  </insert>
+    <!--校验用户信息唯一性-->
+<select id="checkInfo" resultType="int">
+    select count(uid) from user
+    <where>
+        <if test="type=='username'">
+            username=#{info}
+        </if>
+        <if test="type=='email'">
+            email=#{info}
+        </if>
+        <if test="type=='telephone'">
+            telephone=#{info}
+        </if>
+    </where>
+</select>
+
+    <!--查询用户，根据登录信息与密码-->
+    <!--登录信息可以是用户名、邮箱、电话号-->
+    <select id="selectUser" resultType="User">
+    select uid,<include refid="userColumn"/>
+    from user
+        where (username=#{loginInfo}
+        or email=#{loginInfo}
+        or telephone=#{loginInfo})
+        and password=#{password}
+
+    </select>
+
+    <update id="updateUser">
+        update user
+        set password=#{password},
+        gender=#{gender},
+        telephone=#{telephone}
+        where uid=#{uid}
+    </update>
+</mapper>
